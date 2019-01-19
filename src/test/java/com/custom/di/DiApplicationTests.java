@@ -1,7 +1,8 @@
 package com.custom.di;
 
-import com.custom.di.infrastructure.Factory;
+import com.custom.di.services.Factory;
 import com.custom.di.services.MyService;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,7 +16,7 @@ public class DiApplicationTests {
 	public void contextLoads() {
 		MyService object = Factory.getInstance().get(MyService.class);
 
-		System.out.println(object.getKey());
+		Assert.assertEquals("value1", object.getKey());
 	}
 
 }

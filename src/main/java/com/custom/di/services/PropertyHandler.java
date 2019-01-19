@@ -1,6 +1,8 @@
 package com.custom.di.services;
 
-public class PropertyHandler {
+import com.custom.di.infrastructure.StringPropertyHandler;
+
+public class PropertyHandler implements StringPropertyHandler {
     public String getProperty(String key) {
         switch (key) {
             case "key1":

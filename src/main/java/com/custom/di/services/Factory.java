@@ -1,8 +1,6 @@
-package com.custom.di.infrastructure;
+package com.custom.di.services;
 
-import com.custom.di.services.MyService;
-import com.custom.di.services.OtherService;
-import com.custom.di.services.PropertyHandler;
+import com.custom.di.infrastructure.UnityContainer;
 
 public class Factory {
     private static Factory instance;
