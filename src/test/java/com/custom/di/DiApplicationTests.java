@@ -13,7 +13,7 @@ public class DiApplicationTests {
 
 	@Test
 	public void contextLoads() {
-		MyService object = Factory.getInstance().createObject(MyService.class);
+		MyService object = Factory.getInstance().get(MyService.class);
 
 		System.out.println(object.getKey());
 	}

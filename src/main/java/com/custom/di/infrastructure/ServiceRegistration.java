@@ -4,9 +4,9 @@ import java.lang.reflect.Type;
 
 public class ServiceRegistration {
     private Type classType;
-    private Factory.CreationType creationType;
+    private UnityContainer.CreationType creationType;
 
-    public ServiceRegistration(Type classType, Factory.CreationType creationType) {
+    public ServiceRegistration(Type classType, UnityContainer.CreationType creationType) {
         this.classType = classType;
         this.creationType = creationType;
     }
@@ -15,7 +15,7 @@ public class ServiceRegistration {
         return classType;
     }
 
-    public Factory.CreationType getCreationType() {
+    public UnityContainer.CreationType getCreationType() {
         return creationType;
     }
 }
