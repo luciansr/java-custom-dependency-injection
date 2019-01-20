@@ -20,8 +20,8 @@ public class Factory {
     }
 
     public void register() {
-        unityContainer.AddSingleton(MyService.class);
-        unityContainer.AddSingleton(OtherService.class);
+        unityContainer.addSingleton(MyService.class);
+        unityContainer.addSingleton(OtherService.class);
     }
 
     public <T> T get(Class<T> clazz) {

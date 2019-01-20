@@ -1,7 +1,5 @@
 package com.custom.di.infrastructure;
 
-import com.custom.di.services.PropertyHandler;
-
 import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,12 +10,10 @@ public class UnityContainer {
 
     public enum CreationType {
         TRANSIENT,
-        SCOPED,
         SINGLETON
     }
 
     private HashMap<String, Object> createdSingletonObjects;
-    private ThreadLocal<HashMap<String, Object>> createdScopedObjects;
     private HashMap<String, ServiceRegistration> registeredServices;
 
     private StringPropertyHandler propertyHandler;
@@ -25,7 +21,7 @@ public class UnityContainer {
     public UnityContainer(StringPropertyHandler propertyHandler) {
         registeredServices = new HashMap<>();
         createdSingletonObjects = new HashMap<>();
-        createdScopedObjects = new ThreadLocal<>();
+
         this.propertyHandler = propertyHandler;
     }
 
@@ -35,28 +31,20 @@ public class UnityContainer {
         }
     }
 
-    public <T, TExtension extends T> void AddTransient(Class<T> requestedClass, Class<TExtension> createdClass) {
+    public <T, TExtension extends T> void addTransient(Class<T> requestedClass, Class<TExtension> createdClass) {
         register(requestedClass.getTypeName(), createdClass, CreationType.TRANSIENT);
     }
 
-    public <T> void AddTransient(Class<T> clazz) {
-        this.AddTransient(clazz, clazz);
+    public <T> void addTransient(Class<T> clazz) {
+        this.addTransient(clazz, clazz);
     }
 
-    public <T, TExtension extends T> void AddScoped(Class<T> requestedClass, Class<TExtension> createdClass) {
-        register(requestedClass.getTypeName(), createdClass, CreationType.SCOPED);
-    }
-
-    public <T> void AddScoped(Class<T> clazz) {
-        this.AddScoped(clazz, clazz);
-    }
-
-    public <T, TExtension extends T> void AddSingleton(Class<T> requestedClass, Class<TExtension> createdClass) {
+    public <T, TExtension extends T> void addSingleton(Class<T> requestedClass, Class<TExtension> createdClass) {
         register(requestedClass.getTypeName(), createdClass, CreationType.SINGLETON);
     }
 
-    public <T> void AddSingleton(Class<T> clazz) {
-        this.AddSingleton(clazz, clazz);
+    public <T> void addSingleton(Class<T> clazz) {
+        this.addSingleton(clazz, clazz);
     }
 
     private <T> boolean isRegistered(Class<T> clazz) {
@@ -67,8 +55,6 @@ public class UnityContainer {
         switch (creationType) {
             case TRANSIENT:
                 return getTransientObject(clazz.getTypeName());
-            case SCOPED:
-                return getScopedObject(clazz.getTypeName());
             case SINGLETON:
                 return getSingletonObject(clazz.getTypeName());
             default: return null;
@@ -79,10 +65,6 @@ public class UnityContainer {
         return null;
     }
 
-    private <T> T getScopedObject (String classTypeName) {
-        return (T) createdScopedObjects.get().get(classTypeName);
-    }
-
     private <T> T getSingletonObject (String classTypeName) {
         return (T) createdSingletonObjects.get(classTypeName);
     }
@@ -90,9 +72,6 @@ public class UnityContainer {
     private void registerCreatedOject(String classTypeName, CreationType creationType, Object object) {
         switch (creationType) {
             case TRANSIENT:
-                return;
-            case SCOPED:
-                createdScopedObjects.get().put(classTypeName, object);
                 return;
             case SINGLETON:
                 createdSingletonObjects.put(classTypeName, object);
@@ -140,7 +119,7 @@ public class UnityContainer {
                             constructorParameters.add(objectParameter);
 
                         } else {
-                            Object objectParameter = createObject(parameter.getType());
+                            Object objectParameter = createObject(parameter.getType(), dependecyList);
                             constructorParameters.add(objectParameter);
                         }
                     }
@@ -153,6 +132,8 @@ public class UnityContainer {
                     return myObj;
                 }
             }
+
+            throw new NoPublicConstructorFoundException(deliveredClassTypeName);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
