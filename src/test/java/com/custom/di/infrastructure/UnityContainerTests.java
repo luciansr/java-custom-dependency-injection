@@ -16,12 +16,23 @@ public class UnityContainerTests {
     public void createSimpleObject() {
         stringPropertyHandler = Mockito.mock(StringPropertyHandler.class);
 
-
         UnityContainer unityContainer = new UnityContainer(stringPropertyHandler);
         unityContainer.addSingleton(SimpleObject.class);
         SimpleObject object = unityContainer.createObject(SimpleObject.class);
 
         assertNotNull("SimpleObject.class was created", object);
+    }
+
+    @Test
+    public void createSimpleObjectWithDependency() {
+        stringPropertyHandler = Mockito.mock(StringPropertyHandler.class);
+
+        UnityContainer unityContainer = new UnityContainer(stringPropertyHandler);
+        unityContainer.addSingleton(SimpleObject.class);
+        unityContainer.addSingleton(DependentObject1.class);
+        DependentObject1 object = unityContainer.createObject(DependentObject1.class);
+
+        assertNotNull("DependentObject1.class was created", object);
     }
 
     @Test(expected = NotRegisteredClassException.class)
