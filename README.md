@@ -1,12 +1,13 @@
 # java-custom-dependency-injection
 
+This library was heavily based on Spring Boot and .Net Core dependency injection syntax.
+
 ![Pull requests accepted!](https://img.shields.io/badge/PRs-Accepted-brightgreen.svg)
 
 ## When to use this library
 
-This library was created with the intention of making possible that old Java projects be able to use Dependency Injection and Inversion of Control. 
+It was created with the intention of making possible that old Java projects be able to use Dependency Injection and Inversion of Control. 
 Most recent frameworks already have it. So if you use Spring Boot, for instance, this is not for you.
-
 
 ## How to use this library
 
