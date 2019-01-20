@@ -196,9 +196,9 @@ if(MY_EXTERNAL_CONFIG_SAYS_TO) {
 
 ## Warnings 
 
-1. You cannot have circular dependencies.
-2. All your registered objects have one public constructor (if you have more than one, it cannot guarantee which one will be used).
-3. If you don't have public constructors, your object will not be created.
-4. If you did not explicitly register your object. It will not be created.
-5. You cannot create an Abstract class.
-6. You cannot create an Interface.
+1. Your object dependency graph cannot have circular dependencies.
+2. All your registered objects must have one public constructor. Otherwise, it's not guaranteed which one will be used.
+3. Objects that don't have public constructors won't be created.
+4. Objects that weren't properly registered won't be created.
+5. Abstract classes won't be created.
+6. Interfaces cannot be created.
