@@ -1,16 +1,12 @@
 package com.custom.di.infrastructure;
 
-import com.custom.di.infrastructure.helpers.Object1;
-import com.custom.di.infrastructure.helpers.Object2;
-import com.custom.di.infrastructure.helpers.SimpleObject;
-import com.custom.di.infrastructure.helpers.ObjectWithNoConstructor;
+import com.custom.di.infrastructure.helpers.*;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
-import static junit.framework.TestCase.assertNull;
-import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.when;
 
 public class UnityContainerTests {
     @Mock
@@ -85,6 +81,33 @@ public class UnityContainerTests {
         SimpleObject object2 = unityContainer.createObject(SimpleObject.class);
 
         assertNotEquals("Objects are not the same", object1, object2);
+    }
+
+    @Test
+    public void testReceiveStringAsParameter() {
+        stringPropertyHandler = Mockito.mock(StringPropertyHandler.class);
+        when(stringPropertyHandler.getProperty("test-key")).thenReturn("value1");
+
+        UnityContainer unityContainer = new UnityContainer(stringPropertyHandler);
+        unityContainer.addTransient(StringDependentObject.class);
+
+        StringDependentObject object = unityContainer.createObject(StringDependentObject.class);
+
+        assertNotNull("StringDependentObject.class was created", object);
+        assertEquals("String dependency was correctly injected by StringPropertyHandler", "value1", object.getTest());
+    }
+
+    @Test
+    public void testReceiveNullStringAsParameter() {
+        stringPropertyHandler = Mockito.mock(StringPropertyHandler.class);
+
+        UnityContainer unityContainer = new UnityContainer(stringPropertyHandler);
+        unityContainer.addTransient(StringDependentObject.class);
+
+        StringDependentObject object = unityContainer.createObject(StringDependentObject.class);
+
+        assertNotNull("StringDependentObject.class was created", object);
+        assertNull("String dependency does not exists on StringPropertyHandler", object.getTest());
     }
 
 }
