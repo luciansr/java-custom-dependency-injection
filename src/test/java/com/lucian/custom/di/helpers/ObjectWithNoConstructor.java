@@ -1,4 +1,4 @@
-package com.lucian.custom.di.infrastructure.helpers;
+package com.lucian.custom.di.helpers;
 
 public class ObjectWithNoConstructor {
     private ObjectWithNoConstructor() {

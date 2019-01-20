@@ -1,9 +1,7 @@
-package com.lucian.custom.di.infrastructure;
+package com.lucian.custom.di;
 
-import com.lucian.custom.di.infrastructure.exceptions.CircularDependencyException;
-import com.lucian.custom.di.infrastructure.exceptions.NoPublicConstructorFoundException;
-import com.lucian.custom.di.infrastructure.exceptions.NotRegisteredClassException;
-import com.lucian.custom.di.infrastructure.helpers.*;
+import com.lucian.custom.di.exceptions.*;
+import com.lucian.custom.di.helpers.*;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -69,6 +67,28 @@ public class UnityContainerTests {
         ObjectWithNoConstructor object = unityContainer.createObject(ObjectWithNoConstructor.class);
     }
 
+    @Test(expected = InterfaceCreationNotAllowedException.class)
+    public void testCreatingDirectlyInterfaces() {
+
+        stringPropertyHandler = Mockito.mock(StringPropertyHandler.class);
+
+        UnityContainer unityContainer = new UnityContainer(stringPropertyHandler);
+        unityContainer.addSingleton(Interface1.class);
+
+        Interface1 object = unityContainer.createObject(Interface1.class);
+    }
+
+    @Test(expected = AbstractCreationNotAllowedException.class)
+    public void testCreatingDirectlyAbstractClasses() {
+
+        stringPropertyHandler = Mockito.mock(StringPropertyHandler.class);
+
+        UnityContainer unityContainer = new UnityContainer(stringPropertyHandler);
+        unityContainer.addSingleton(AbstractClass.class);
+
+        AbstractClass object = unityContainer.createObject(AbstractClass.class);
+    }
+
     @Test
     public void testCreateSingletonObject() {
 
@@ -122,6 +142,33 @@ public class UnityContainerTests {
 
         assertNotNull("StringDependentObject.class was created", object);
         assertNull("String dependency does not exists on StringPropertyHandler", object.getTest());
+    }
+
+    @Test
+    public void testObjectWhenInjectingInterface() {
+        stringPropertyHandler = Mockito.mock(StringPropertyHandler.class);
+
+        UnityContainer unityContainer = new UnityContainer(stringPropertyHandler);
+        unityContainer.addSingleton(Interface1.class, Service1.class);
+
+        Interface1 object = unityContainer.createObject(Interface1.class);
+
+        assertNotNull("InterfaceDependentService.class was created", object);
+        assertEquals("Interface1 object is a instance of Service1 type", Service1.class, object.getClass());
+    }
+
+    @Test
+    public void testCreateInterfaceDependentService() {
+        stringPropertyHandler = Mockito.mock(StringPropertyHandler.class);
+
+        UnityContainer unityContainer = new UnityContainer(stringPropertyHandler);
+        unityContainer.addSingleton(InterfaceDependentService.class);
+        unityContainer.addSingleton(Interface1.class, Service1.class);
+
+        InterfaceDependentService object = unityContainer.createObject(InterfaceDependentService.class);
+
+        assertNotNull("InterfaceDependentService.class was created", object);
+        assertEquals("Foobar message correctly received", "foobar", object.getFooBar());
     }
 
 }

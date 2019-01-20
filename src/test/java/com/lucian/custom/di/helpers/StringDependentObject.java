@@ -1,6 +1,6 @@
-package com.lucian.custom.di.infrastructure.helpers;
+package com.lucian.custom.di.helpers;
 
-import com.lucian.custom.di.infrastructure.CustomValue;
+import com.lucian.custom.di.CustomValue;
 
 public class StringDependentObject {
     private String test;

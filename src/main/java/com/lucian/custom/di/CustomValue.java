@@ -1,4 +1,4 @@
-package com.lucian.custom.di.infrastructure;
+package com.lucian.custom.di;
 
 import java.lang.annotation.*;
 

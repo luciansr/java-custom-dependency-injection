@@ -1,8 +1,6 @@
-package com.lucian.custom.di.infrastructure;
+package com.lucian.custom.di;
 
-import com.lucian.custom.di.infrastructure.exceptions.CircularDependencyException;
-import com.lucian.custom.di.infrastructure.exceptions.NoPublicConstructorFoundException;
-import com.lucian.custom.di.infrastructure.exceptions.NotRegisteredClassException;
+import com.lucian.custom.di.exceptions.*;
 
 import java.lang.reflect.*;
 import java.util.ArrayList;
@@ -30,8 +28,22 @@ public class UnityContainer {
     }
 
     private void register(String key, Type classType, CreationType creationType) {
-        if (!registeredServices.containsKey(key)) {
-            registeredServices.put(key, new ServiceRegistration(classType, creationType));
+        try {
+            Class<?> deliveredClass = Class.forName(classType.getTypeName());
+
+            if (Modifier.isInterface(deliveredClass.getModifiers())) {
+                throw new InterfaceCreationNotAllowedException(classType.getTypeName());
+            }
+
+            if (Modifier.isAbstract(deliveredClass.getModifiers())) {
+                throw new AbstractCreationNotAllowedException(classType.getTypeName());
+            }
+
+            if (!registeredServices.containsKey(key)) {
+                registeredServices.put(key, new ServiceRegistration(deliveredClass, creationType));
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
     }
 
@@ -55,21 +67,22 @@ public class UnityContainer {
         return registeredServices.containsKey(clazz.getTypeName());
     }
 
-    private <T> T getPreviouslyCreatedObject (Type clazz, CreationType creationType) {
+    private <T> T getPreviouslyCreatedObject(Type clazz, CreationType creationType) {
         switch (creationType) {
             case TRANSIENT:
                 return getTransientObject(clazz.getTypeName());
             case SINGLETON:
                 return getSingletonObject(clazz.getTypeName());
-            default: return null;
+            default:
+                return null;
         }
     }
 
-    private <T> T getTransientObject (String classTypeName) {
+    private <T> T getTransientObject(String classTypeName) {
         return null;
     }
 
-    private <T> T getSingletonObject (String classTypeName) {
+    private <T> T getSingletonObject(String classTypeName) {
         return (T) createdSingletonObjects.get(classTypeName);
     }
 
@@ -80,7 +93,8 @@ public class UnityContainer {
             case SINGLETON:
                 createdSingletonObjects.put(classTypeName, object);
                 return;
-            default: return;
+            default:
+                return;
         }
     }
 
@@ -91,12 +105,12 @@ public class UnityContainer {
 
         ServiceRegistration serviceRegistration = registeredServices.get(clazz.getTypeName());
         T existentObject = getPreviouslyCreatedObject(serviceRegistration.getClassType(), serviceRegistration.getCreationType());
-        if(existentObject != null) return existentObject;
+        if (existentObject != null) return existentObject;
 
         String requestedClassTypeName = clazz.getTypeName();
         String deliveredClassTypeName = serviceRegistration.getClassType().getTypeName();
 
-        if(dependecyList == null) {
+        if (dependecyList == null) {
             dependecyList = new HashSet<>();
         }
 
@@ -107,21 +121,20 @@ public class UnityContainer {
         dependecyList.add(requestedClassTypeName);
 
         try {
-            Constructor<?>[] constructors = Class.forName(deliveredClassTypeName).getConstructors();
+            Constructor<?>[] constructors = serviceRegistration.getClassType().getConstructors();
 
             for (Constructor<?> constructor : constructors) {
-                if (constructor.toString().startsWith("public ")) {
+                if (Modifier.isPublic(constructor.getModifiers())) {
                     List<Object> constructorParameters = new ArrayList<>();
 
                     //getting all constructor parameters
                     for (Parameter parameter : constructor.getParameters()) {
                         if (parameter.getType() == String.class) {
                             CustomValue annotation = parameter.getAnnotation(CustomValue.class);
-
                             String propertyToSearch = annotation.value();
+
                             String objectParameter = propertyHandler.getProperty(propertyToSearch);
                             constructorParameters.add(objectParameter);
-
                         } else {
                             Object objectParameter = createObject(parameter.getType(), dependecyList);
                             constructorParameters.add(objectParameter);
@@ -138,8 +151,6 @@ public class UnityContainer {
             }
 
             throw new NoPublicConstructorFoundException(deliveredClassTypeName);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InstantiationException e) {
