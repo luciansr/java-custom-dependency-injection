@@ -1,4 +1,4 @@
-package com.custom.di.infrastructure;
+package com.lucian.custom.di.infrastructure.exceptions;
 
 public class NoPublicConstructorFoundException extends RuntimeException {
     public NoPublicConstructorFoundException(String className) {

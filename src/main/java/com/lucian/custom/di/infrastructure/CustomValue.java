@@ -1,4 +1,4 @@
-package com.custom.di.infrastructure;
+package com.lucian.custom.di.infrastructure;
 
 import java.lang.annotation.*;
 
@@ -6,6 +6,6 @@ import java.lang.annotation.*;
 @Target(ElementType.PARAMETER)
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
-public @interface CustomStringProperty {
+public @interface CustomValue {
     public String value() default "";
 }

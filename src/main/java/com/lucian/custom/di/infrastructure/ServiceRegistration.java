@@ -1,4 +1,4 @@
-package com.custom.di.infrastructure;
+package com.lucian.custom.di.infrastructure;
 
 import java.lang.reflect.Type;
 

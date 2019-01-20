@@ -1,4 +1,8 @@
-package com.custom.di.infrastructure;
+package com.lucian.custom.di.infrastructure;
+
+import com.lucian.custom.di.infrastructure.exceptions.CircularDependencyException;
+import com.lucian.custom.di.infrastructure.exceptions.NoPublicConstructorFoundException;
+import com.lucian.custom.di.infrastructure.exceptions.NotRegisteredClassException;
 
 import java.lang.reflect.*;
 import java.util.ArrayList;
@@ -112,7 +116,7 @@ public class UnityContainer {
                     //getting all constructor parameters
                     for (Parameter parameter : constructor.getParameters()) {
                         if (parameter.getType() == String.class) {
-                            CustomStringProperty annotation = parameter.getAnnotation(CustomStringProperty.class);
+                            CustomValue annotation = parameter.getAnnotation(CustomValue.class);
 
                             String propertyToSearch = annotation.value();
                             String objectParameter = propertyHandler.getProperty(propertyToSearch);
