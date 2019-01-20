@@ -1,5 +1,7 @@
 # java-custom-dependency-injection
 
+![Pull requests accepted!](https://img.shields.io/badge/PRs-Accepted-brightgreen.svg)
+
 ## When to use this library
 
 This library was created with the intention of making possible that old Java projects be able to use Dependency Injection and Inversion of Control. 
