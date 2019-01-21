@@ -40,7 +40,6 @@ jobs:
         
       # run tests!
       - run: gradle test
-      - run: echo test_variable $test_variable test_variable$
 
 
 
