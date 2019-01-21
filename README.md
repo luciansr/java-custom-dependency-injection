@@ -3,6 +3,7 @@
 This library was heavily based on Spring Boot and .Net Core dependency injection syntax.
 
 ![Pull requests accepted!](https://img.shields.io/badge/PRs-Accepted-brightgreen.svg)
+[![CircleCI](https://circleci.com/gh/luciansr/java-custom-dependency-injection.svg?style=shield)](https://circleci.com/gh/luciansr/java-custom-dependency-injection)
 
 ## When to use this library
 
